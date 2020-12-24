@@ -16,7 +16,7 @@ class myConv(nn.Module):
         self.dov=dov
         self.conv=nn.Conv1d(in_size, out_size,filter_size,stride,pad)
         self.bn=nn.BatchNorm1d(out_size,momentum=0.1)
-        
+        # self.bn=nn.LayerNorm(out_size)
         
         if self.dov>0:
             self.do=nn.Dropout(dov)

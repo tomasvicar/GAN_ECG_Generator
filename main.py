@@ -8,12 +8,20 @@ from IPython.display import clear_output
 
 from dataloader import DataLoader
 import dcgan_1d
-
+import unet_1d
+import discriminator
+from datetime import datetime
+import os
 
 
 if __name__ == "__main__":
     
     data_path = '../data_cinc2020_sinusonly'
+    save_folder = '../res_' + datetime.now().strftime("%D__%H_%M").replace('/','_')
+    
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
+    
     
     workers = 4
     batch_size = 64
@@ -22,6 +30,7 @@ if __name__ == "__main__":
     latent_size = 100
     
     # alpha = 0.00005
+    # alpha = 0.0005
     # c = 0.01
     
     lam = 10 
@@ -31,8 +40,6 @@ if __name__ == "__main__":
     
     
     device = torch.device("cuda:0")
-    
-    
 
     
     loader = DataLoader(data_path)
@@ -40,7 +47,9 @@ if __name__ == "__main__":
     
     
     G = dcgan_1d.Generator(latent_size)
+    # G =unet_1d.Unet1d()
     D = dcgan_1d.Discriminator()
+    # D = discriminator.Discriminator()
     
     G = G.to(device)
     D = D.to(device)
@@ -68,6 +77,7 @@ if __name__ == "__main__":
             x = data.to(device)
     
             z = torch.randn([batch_size,latent_size,1], device=device)
+            # z = torch.randn_like(x, device=device)
             if iters == 0:
                 z_fix = z
                 x_fix = x.detach().cpu().numpy()
@@ -110,6 +120,7 @@ if __name__ == "__main__":
             if (iters%D_iter) ==0:
                 
                 z = torch.randn([batch_size,latent_size,1], device=device)
+                # z = torch.randn_like(x, device=device)
                 
                 Gz = G(z)
                 
@@ -130,7 +141,7 @@ if __name__ == "__main__":
         D_losses.append(np.mean(D_losses_tmp))
         G_losses.append(np.mean(G_losses_tmp))
             
-        print("\014")
+        # print("\014")
         plt.plot(D_losses)
         plt.title('D')
         plt.show()
@@ -147,7 +158,13 @@ if __name__ == "__main__":
         axs[1].plot(Gz_fix[0,5,:])
         axs[2].plot(Gz_fix[1,0,:])
         axs[3].plot(Gz_fix[1,5,:])
+        torch.save(G.state_dict(), save_folder + '/G' + str(epoch).zfill(6) + '.pt' )
+        torch.save(D.state_dict(), save_folder + '/D' + str(epoch).zfill(6) + '.pt' )
+        plt.savefig(save_folder + '/fake' + str(epoch).zfill(6) + '.png' )
         plt.show()
+        
+        
+
 
 
         fig, axs = plt.subplots(4, 1)
