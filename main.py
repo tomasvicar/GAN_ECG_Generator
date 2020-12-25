@@ -144,20 +144,24 @@ if __name__ == "__main__":
         # print("\014")
         plt.plot(D_losses)
         plt.title('D')
+        plt.savefig(save_folder + '/Dloss' + str(epoch).zfill(6) + '.png' )
         plt.show()
         plt.plot(G_losses)
         plt.title('G')
+        plt.savefig(save_folder + '/Gloss' + str(epoch).zfill(6) + '.png' )
         plt.show()
                 
                 
         Gz_fix = G(z_fix).detach().cpu().numpy()
         
         
-        fig, axs = plt.subplots(4, 1)
+        fig, axs = plt.subplots(6, 1)
         axs[0].plot(Gz_fix[0,0,:])
         axs[1].plot(Gz_fix[0,5,:])
         axs[2].plot(Gz_fix[1,0,:])
         axs[3].plot(Gz_fix[1,5,:])
+        axs[4].plot(Gz_fix[2,0,:])
+        axs[5].plot(Gz_fix[2,5,:])
         torch.save(G.state_dict(), save_folder + '/G' + str(epoch).zfill(6) + '.pt' )
         torch.save(D.state_dict(), save_folder + '/D' + str(epoch).zfill(6) + '.pt' )
         plt.savefig(save_folder + '/fake' + str(epoch).zfill(6) + '.png' )
@@ -167,12 +171,12 @@ if __name__ == "__main__":
 
 
 
-        fig, axs = plt.subplots(4, 1)
-        axs[0].plot(x_fix[0,0,:])
-        axs[1].plot(x_fix[0,5,:])
-        axs[2].plot(x_fix[1,0,:])
-        axs[3].plot(x_fix[1,5,:])
-        plt.show()
+        # fig, axs = plt.subplots(4, 1)
+        # axs[0].plot(x_fix[0,0,:])
+        # axs[1].plot(x_fix[0,5,:])
+        # axs[2].plot(x_fix[1,0,:])
+        # axs[3].plot(x_fix[1,5,:])
+        # plt.show()
         
         
         
