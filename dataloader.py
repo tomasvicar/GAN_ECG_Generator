@@ -28,21 +28,16 @@ class DataLoader(torch.utils.data.Dataset):
         return data
     
     
-    
-    
-    
-    
 if __name__ == "__main__": 
-    loader = DataLoader('../data_64')
-    loader = torch.utils.data.DataLoader(loader, batch_size=128,shuffle=True, num_workers=0,drop_last=True)
+    loader = DataLoader('../data_cinc2020_sinusonly')
+    loader = torch.utils.data.DataLoader(loader, batch_size=16,shuffle=True, num_workers=0,drop_last=True)
     
-    for i,data in enumerate(loader):
+    for i,x in enumerate(loader):
         
-        plt.figure(figsize=(15,15))
-        img = np.transpose(vutils.make_grid(data.cpu().detach()[:32],padding=2, normalize=True).numpy(),(1,2,0))
-        plt.imshow(img)
+        fig, axs = plt.subplots(4, 1)
+        axs[0].plot(x[0,0,:])
+        axs[1].plot(x[0,5,:])
+        axs[2].plot(x[1,0,:])
+        axs[3].plot(x[1,5,:])
         plt.show()
-        imsave('example_img/real' + str(i).zfill(7) + '.png',img)
-    
-        if i ==3: 
-            break
+        break    

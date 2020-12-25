@@ -8,8 +8,6 @@ from IPython.display import clear_output
 
 from dataloader import DataLoader
 import dcgan_1d
-import unet_1d
-import discriminator
 from datetime import datetime
 import os
 
@@ -29,10 +27,7 @@ if __name__ == "__main__":
     D_iter = 5
     latent_size = 100
     
-    # alpha = 0.00005
-    # alpha = 0.0005
-    # c = 0.01
-    
+
     lam = 10 
     alpha = 0.0001
     beta_1 = 0
@@ -47,16 +42,11 @@ if __name__ == "__main__":
     
     
     G = dcgan_1d.Generator(latent_size)
-    # G =unet_1d.Unet1d()
     D = dcgan_1d.Discriminator()
-    # D = discriminator.Discriminator()
     
     G = G.to(device)
     D = D.to(device)
         
-
-    # optimizerD = optim.RMSprop(D.parameters(), lr=alpha)
-    # optimizerG = optim.RMSprop(G.parameters(), lr=alpha)
     
     optimizerD = optim.Adam(D.parameters(), lr=alpha, betas=(beta_1, beta_2))
     optimizerG = optim.Adam(G.parameters(), lr=alpha, betas=(beta_1, beta_2))
@@ -77,7 +67,6 @@ if __name__ == "__main__":
             x = data.to(device)
     
             z = torch.randn([batch_size,latent_size,1], device=device)
-            # z = torch.randn_like(x, device=device)
             if iters == 0:
                 z_fix = z
                 x_fix = x.detach().cpu().numpy()
@@ -103,14 +92,11 @@ if __name__ == "__main__":
 
             loss_D =torch.mean(DGz) - torch.mean(Dx) + gradient_penalty
             
-            # loss_D =torch.mean(DGz) - torch.mean(Dx)
             
             D.zero_grad()
             loss_D.backward()
             optimizerD.step()
             
-            # for p in D.parameters():
-            #     p.data.clamp_(c, c)
             
         
             D_losses_tmp.append(loss_D.cpu().detach().numpy())
@@ -120,7 +106,6 @@ if __name__ == "__main__":
             if (iters%D_iter) ==0:
                 
                 z = torch.randn([batch_size,latent_size,1], device=device)
-                # z = torch.randn_like(x, device=device)
                 
                 Gz = G(z)
                 

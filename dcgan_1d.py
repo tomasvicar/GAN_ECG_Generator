@@ -6,10 +6,23 @@ class GenLayer(nn.Module):
     def __init__(self, in_size, out_size):
         super().__init__()
         
-        self.main = nn.Sequential(
+        self.tconv = nn.Sequential(
             nn.ConvTranspose1d(in_size, out_size, 4, 2, 1, bias=False),
             nn.BatchNorm1d(out_size),
             nn.ReLU(True),
+            )
+        self.convs1 = nn.Sequential(
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+        )
+        self.convs2 = nn.Sequential(
             nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
             nn.BatchNorm1d(out_size),
             nn.ReLU(True),
@@ -21,8 +34,12 @@ class GenLayer(nn.Module):
             nn.ReLU(True),
         )
         
-    def forward(self, inputs):
-        outputs = self.main(inputs)
+        
+    def forward(self, x):
+        x = self.tconv(x)
+        y1 = self.convs1(x)
+        y2 = self.convs2(x+y1)
+        outputs = x+y1+y2
         return outputs
 
 
@@ -72,10 +89,19 @@ class DisLayer(nn.Module):
     def __init__(self, in_size, out_size):
         super().__init__()
         
-        self.main = nn.Sequential(
+        self.sconv = nn.Sequential(
             nn.Conv1d(in_size, out_size, 4, 2, 1, bias=False),
-            # nn.BatchNorm1d(ndf * 2),
             nn.LeakyReLU(0.2, inplace=True),
+        )
+        self.convs1 = nn.Sequential(
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.LeakyReLU(0.2, inplace=True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.LeakyReLU(0.2, inplace=True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.LeakyReLU(0.2, inplace=True),
+        )
+        self.convs2 = nn.Sequential(
             nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
@@ -84,9 +110,12 @@ class DisLayer(nn.Module):
             nn.LeakyReLU(0.2, inplace=True),
         )
         
-    def forward(self, inputs):
-        outputs = self.main(inputs)
-        return outputs   
+    def forward(self, x):
+        x = self.sconv(x)
+        y1 = self.convs1(x)
+        y2 = self.convs2(x+y1)
+        outputs = x+y1+y2
+        return outputs  
     
     
     
