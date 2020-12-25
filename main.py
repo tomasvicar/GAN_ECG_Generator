@@ -156,6 +156,7 @@ if __name__ == "__main__":
         
         
         fig, axs = plt.subplots(6, 1)
+        fig.suptitle('epoch ' + str(epoch))
         axs[0].plot(Gz_fix[0,0,:])
         axs[1].plot(Gz_fix[0,5,:])
         axs[2].plot(Gz_fix[1,0,:])
