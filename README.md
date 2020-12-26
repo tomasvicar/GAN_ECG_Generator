@@ -19,4 +19,4 @@ code is using 1D [DCGAN](https://arxiv.org/pdf/1511.06434.pdf) with aditional co
 
 
 ## training gif
-<img src="gan_res2.gif" width="1000" height="800" />
+<img src="gan_res2.gif" width="1200" height="800" />
