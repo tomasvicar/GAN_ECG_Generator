@@ -23,15 +23,16 @@ if __name__ == "__main__":
     
     workers = 4
     batch_size = 64
-    num_epochs = 5000
     D_iter = 5
     latent_size = 100
+    milestones = [80]
     
 
     lam = 10 
-    alpha = 0.0001
+    alpha = 0.001
     beta_1 = 0
     beta_2 = 0.9
+    
     
     
     device = torch.device("cuda:0")
@@ -50,18 +51,21 @@ if __name__ == "__main__":
     
     optimizerD = optim.Adam(D.parameters(), lr=alpha, betas=(beta_1, beta_2))
     optimizerG = optim.Adam(G.parameters(), lr=alpha, betas=(beta_1, beta_2))
+    schedulerD = optim.lr_scheduler.MultiStepLR(optimizerD, milestones, gamma=0.1)
+    schedulerG = optim.lr_scheduler.MultiStepLR(optimizerG, milestones, gamma=0.1)
     
     G_losses = []
     D_losses = []
 
     
     iters =-1
-    for epoch in range(num_epochs):
+    for epoch in range(milestones[-1]):
         G_losses_tmp = []
         D_losses_tmp = []
         for i,data in enumerate(loader):
             iters = iters +1
-            
+            D.train()
+            G.train()
             
             
             x = data.to(device)
@@ -122,6 +126,8 @@ if __name__ == "__main__":
                 G_losses_tmp.append(loss_G.cpu().detach().numpy())
             
             
+        schedulerD.step()
+        schedulerG.step()
             
         D_losses.append(np.mean(D_losses_tmp))
         G_losses.append(np.mean(G_losses_tmp))
@@ -137,6 +143,8 @@ if __name__ == "__main__":
         plt.show()
                 
                 
+        D.eval()
+        G.eval()
         Gz_fix = G(z_fix).detach().cpu().numpy()
         
         

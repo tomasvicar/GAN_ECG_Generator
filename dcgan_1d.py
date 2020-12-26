@@ -33,13 +33,49 @@ class GenLayer(nn.Module):
             nn.BatchNorm1d(out_size),
             nn.ReLU(True),
         )
+        self.convs3 = nn.Sequential(
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+        )
+        self.convs4 = nn.Sequential(
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+        )
+        self.convs5 = nn.Sequential(
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.BatchNorm1d(out_size),
+            nn.ReLU(True),
+        )
         
         
     def forward(self, x):
         x = self.tconv(x)
         y1 = self.convs1(x)
         y2 = self.convs2(x+y1)
-        outputs = x+y1+y2
+        y3 = self.convs3(x+y1+y2)
+        y4 = self.convs4(x+y1+y2+y3)
+        y5 = self.convs5(x+y1+y2+y3+y4)
+        outputs = x+y1+y2+y3+y4+y5
         return outputs
 
 
@@ -88,34 +124,79 @@ class Generator(nn.Module):
 class DisLayer(nn.Module):
     def __init__(self, in_size, out_size):
         super().__init__()
+        G = 32
         
         self.sconv = nn.Sequential(
             nn.Conv1d(in_size, out_size, 4, 2, 1, bias=False),
+            nn.GroupNorm(G,out_size),
             nn.LeakyReLU(0.2, inplace=True),
         )
         self.convs1 = nn.Sequential(
             nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(G,out_size),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(G,out_size),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(G,out_size),
             nn.LeakyReLU(0.2, inplace=True),
         )
         self.convs2 = nn.Sequential(
             nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
-            nn.LeakyReLU(0.2, inplace=True),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
             nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
-            nn.LeakyReLU(0.2, inplace=True),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
             nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
-            nn.LeakyReLU(0.2, inplace=True),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
+        )
+        self.convs3 = nn.Sequential(
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
+        )
+        self.convs4 = nn.Sequential(
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
+        )
+        self.convs5 = nn.Sequential(
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
+            nn.Conv1d(out_size, out_size, 3, 1, 1, bias=False),
+            nn.GroupNorm(int(out_size/16),out_size),
+            nn.LeakyReLU(G, inplace=True),
         )
         
     def forward(self, x):
         x = self.sconv(x)
         y1 = self.convs1(x)
         y2 = self.convs2(x+y1)
-        outputs = x+y1+y2
+        y3 = self.convs3(x+y1+y2)
+        y4 = self.convs4(x+y1+y2+y3)
+        y5 = self.convs5(x+y1+y2+y3+y4)
+        outputs = x+y1+y2+y3+y4+y5
         return outputs  
+    
     
     
     
