@@ -1,6 +1,6 @@
 # GAN_ECG_Generator
 
-[Google Colab link](https://colab.research.google.com/drive/101mA97Hfx15FZJLsNwTq7F4WRpE546OL?usp=sharing)
+[Google Colab link](https://colab.research.google.com/drive/1ASUpPaeP3BkkwfvdhbJmuYYoTvoIztcF?usp=sharing)
 
 [data resized filtered](https://drive.google.com/drive/u/1/folders/1ORRFATWcmv2Dt970tkyHVUh-ZO5Aqyjl)
 
